@@ -1,10 +1,8 @@
-from auth import Authorization
 import praw
 import logging
 from datetime import datetime
 import pytz
 from requests import Session
-import json
 import time
 
 handler = logging.StreamHandler()
