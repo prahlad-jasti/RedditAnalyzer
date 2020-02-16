@@ -10,15 +10,26 @@
           <form action = "#" id = "fr">
               <input type = "text" class="sc" id = "name_1">
               <input type = "text" class="sc" id = "name_2">
-              <input type = "button" onclick = "sendValues();">
+              <input type = "button" id = "compare" onclick = "sendValues();">
           </form>
       </div>
       <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
       <script>
         function sendValues(){
+            function sendValues(){
             var name_1 = document.getElementById("name_1").value;
             var name_2 = document.getElementById("name_2").value;
+            $.ajax({
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({'user_1': name_1, 'user_2': name_2}),
+                dataType: 'json',
+                url: 'http://127.0.0.1:5000/hello'
+            });
         }
+          document.getElementById("compare").onclick = function () {
+              location.href = 'http://127.0.0.1:5000/hello';
+          };
     </script>
   </body>
 </html>
