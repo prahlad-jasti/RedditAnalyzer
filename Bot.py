@@ -50,6 +50,12 @@ for s in r1.submissions.new(limit=None):
         r1_submission_breakdown[s.subreddit.display_name] = s.score
         r1_post_counts[s.subreddit.display_name] = 1
         r1_submission_subs.append(s.subreddit.display_name)
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 2003dc25d20eeef6b37d4489ac8ff977cb6b968a
 for c in r1.comments.new(limit=None):
     if c.subreddit.display_name in r1_comment_breakdown.keys():
         r1_comment_breakdown[c.subreddit.display_name] += c.score
@@ -59,8 +65,17 @@ for c in r1.comments.new(limit=None):
        r1_comment_counts[c.subreddit.display_name] = 1
        r1_comment_subs.append(c.subreddit.display_name)
     #karma_values.append(c.score)
+<<<<<<< HEAD
 r1_top_comment = [c for c in r1.comments.top(limit=1)][0]
 r1_top_submission = [c for c in r1.submissions.top(limit=1)][0]
+=======
+
+
+
+r1_top_comment = [c for c in r1.comments.top(limit=1)][0]
+r1_top_submission = [c for c in r1.submissions.top(limit=1)][0]
+
+>>>>>>> 2003dc25d20eeef6b37d4489ac8ff977cb6b968a
 r2_submission_breakdown = {}
 r2_comment_counts = {}
 r2_post_counts = {}
@@ -68,6 +83,10 @@ r2_submission_subs = []
 r2_comment_subs = []
 r2_comment_breakdown = {}
 #karma_values = []
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2003dc25d20eeef6b37d4489ac8ff977cb6b968a
 for s in r2.submissions.new(limit=None):
     if s.subreddit.display_name in r2_submission_breakdown.keys():
         r2_submission_breakdown[s.subreddit.display_name] += s.score
@@ -76,6 +95,12 @@ for s in r2.submissions.new(limit=None):
         r2_submission_breakdown[s.subreddit.display_name] = s.score
         r2_post_counts[s.subreddit.display_name] = 1
         r2_submission_subs.append(s.subreddit.display_name)
+<<<<<<< HEAD
+=======
+
+
+
+>>>>>>> 2003dc25d20eeef6b37d4489ac8ff977cb6b968a
 for c in r2.comments.new(limit=None):
     if c.subreddit.display_name in r2_comment_breakdown.keys():
         r2_comment_breakdown[c.subreddit.display_name] += c.score
@@ -85,13 +110,28 @@ for c in r2.comments.new(limit=None):
        r2_comment_counts[c.subreddit.display_name] = 1
        r2_comment_subs.append(c.subreddit.display_name)
     #karma_values.append(c.score)
+<<<<<<< HEAD
 r2_top_comment = [c for c in r2.comments.top(limit=1)][0]
 r2_top_submission = [c for c in r2.submissions.top(limit=1)][0]
 '''
+=======
+
+
+
+r2_top_comment = [c for c in r2.comments.top(limit=1)][0]
+r2_top_submission = [c for c in r2.submissions.top(limit=1)][0]
+
+
+
+>>>>>>> 2003dc25d20eeef6b37d4489ac8ff977cb6b968a
 def toEST(utc):
     utc_dt = datetime.strptime(utc, '%Y%m%d %H:%M:%S.%f')
     nyt_dt = utc_dt.replace(tzinfo=pytz.timezone('utc')).astimezone(tz = pytz.timezone('America/New_York'))
     return datetime.strftime(nyt_dt, '%H:%M:%S %m/%d/%Y')
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2003dc25d20eeef6b37d4489ac8ff977cb6b968a
 print(toEST(datetime.fromtimestamp(int(r1.created_utc)).strftime('%Y%m%d %H:%M:%S.%f')))
 print(toEST(datetime.fromtimestamp(int(r2.created_utc)).strftime('%Y%m%d %H:%M:%S.%f')))
 '''
@@ -109,4 +149,8 @@ bins = np.linspace(math.ceil(min(data)),
 plt.xlim([min(data)-5, max(data)+5])
 plt.hist(data, bins=bins, alpha=0.5)
 plt.show()
+<<<<<<< HEAD
 '''
+=======
+'''
+>>>>>>> 2003dc25d20eeef6b37d4489ac8ff977cb6b968a
