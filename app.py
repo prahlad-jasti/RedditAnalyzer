@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    title = "Pornhub"
+    title = "Compareddit"
     return render_template("home.html", title = title)
 
 @app.route('/hello', methods = ['GET','POST'])
