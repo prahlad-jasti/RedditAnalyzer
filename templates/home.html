@@ -1,10 +1,9 @@
 <html>
   <head>
       <title>Niger</title>
-      <link rel="stylesheet" href="/static/css/template.css" />
   </head>
   <body>
-      <h1> Compareddit </h1>
+      <h1>{{title}}</h1>
       <div class = "users">
           <div class = "input_title">Users:</div>
           <form action = "#" id = "fr">
@@ -15,8 +14,7 @@
       </div>
       <script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
       <script>
-        function sendValues(){
-            function sendValues(){
+       function sendValues(){
             var name_1 = document.getElementById("name_1").value;
             var name_2 = document.getElementById("name_2").value;
             $.ajax({
@@ -26,7 +24,6 @@
                 dataType: 'json',
                 url: 'http://127.0.0.1:5000/hello'
             });
-            location.href = 'http://127.0.0.1:5000/hello';
         }
     </script>
   </body>

@@ -10,6 +10,11 @@ from requests import Session
 import json
 import time
 
+def toEST(utc):
+    utc_dt = datetime.strptime(utc, '%Y%m%d %H:%M:%S.%f')
+    nyt_dt = utc_dt.replace(tzinfo=pytz.timezone('utc')).astimezone(tz = pytz.timezone('America/New_York'))
+    return datetime.strftime(nyt_dt, '%H:%M:%S %m/%d/%Y')
+
 handler = logging.StreamHandler()
 handler.setLevel(logging.DEBUG)
 logger = logging.getLogger('prawcore')
@@ -26,8 +31,8 @@ reddit = praw.Reddit(client_id='acrtj7jRqKQlSw',
 class RedditStatistics:
 
     def __init__(self, r1, r2):
-        self.r1 = r1
-        self.r2 = r2
+        self.r1 = reddit.redditor(r1)
+        self.r2 = reddit.redditor(r2)
 
     def karma_1(self):
         r1_karma = {"total_karma": self.r1.link_karma + self.r1.comment_karma, "r1_link": self.r1.link_karma,
@@ -93,14 +98,13 @@ class RedditStatistics:
                 r2_comment_counts[c.subreddit.display_name] = 1
                 r2_comment_subs.append(c.subreddit.display_name)
 
+'''
 r2_top_comment = [c for c in r2.comments.top(limit=1)][0]
 r2_top_submission = [c for c in r2.submissions.top(limit=1)][0]
-def toEST(utc):
-    utc_dt = datetime.strptime(utc, '%Y%m%d %H:%M:%S.%f')
-    nyt_dt = utc_dt.replace(tzinfo=pytz.timezone('utc')).astimezone(tz = pytz.timezone('America/New_York'))
-    return datetime.strftime(nyt_dt, '%H:%M:%S %m/%d/%Y')
 print(toEST(datetime.fromtimestamp(int(r1.created_utc)).strftime('%Y%m%d %H:%M:%S.%f')))
 print(toEST(datetime.fromtimestamp(int(r2.created_utc)).strftime('%Y%m%d %H:%M:%S.%f')))
+'''
+
 '''
 
 # Originally supposed show a histogram of comment karma for user, but
