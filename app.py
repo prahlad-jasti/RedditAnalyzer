@@ -17,8 +17,7 @@ def home():
 def hello():
     if request.method == 'POST':
         users = request.json
-        result = posts.insert_one(users)
-        print('One post: {0}'.format(result.inserted_id))
+        posts.insert_one(users)
     return render_template("hello.html")
 
 if __name__ == "__main__":
