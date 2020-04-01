@@ -1,9 +1,8 @@
-from auth import Authorization
+
 import praw
 import logging
 from datetime import datetime
-import numpy as np
-import matplotlib.pyplot as plt
+
 import pytz
 import math
 from requests import Session
@@ -13,7 +12,7 @@ import time
 def toEST(utc):
     utc_dt = datetime.strptime(utc, '%Y%m%d %H:%M:%S.%f')
     nyt_dt = utc_dt.replace(tzinfo=pytz.timezone('utc')).astimezone(tz = pytz.timezone('America/New_York'))
-    return datetime.strftime(nyt_dt, '%H:%M:%S %m/%d/%Y')
+    return datetime.strftime(nyt_dt, '%m/%d/%Y %H:%M:%S')
 
 handler = logging.StreamHandler()
 handler.setLevel(logging.DEBUG)
@@ -44,66 +43,68 @@ class RedditStatistics:
                     "r2_comment": self.r2.comment_karma}
         return r2_karma
 
-    def r1_submission_karma(self):
-        r1_submission_breakdown = {}
-        r1_post_counts = {}
-        r1_submission_subs = []
+    def submission_karma(self):
+        submission_breakdown = {}
+        post_counts = {}
         for s in self.r1.submissions.new(limit=None):
-            if s.subreddit.display_name in r1_submission_breakdown.keys():
-                r1_submission_breakdown[s.subreddit.display_name] += s.score
-                r1_post_counts[s.subreddit.display_name] += 1
+            if s.subreddit.display_name in submission_breakdown.keys():
+                submission_breakdown[s.subreddit.display_name][0] += s.score
+                post_counts[s.subreddit.display_name][0] += 1
             else:
-                r1_submission_breakdown[s.subreddit.display_name] = s.score
-                r1_post_counts[s.subreddit.display_name] = 1
-                r1_submission_subs.append(s.subreddit.display_name)
-        return r1_submission_breakdown
-
-    def r1_comment_karma(self):
-        r1_comment_counts = {}
-        r1_comment_subs = []
-        r1_comment_breakdown = {}
-        for c in self.r1.comments.new(limit=None):
-            if c.subreddit.display_name in r1_comment_breakdown.keys():
-                r1_comment_breakdown[c.subreddit.display_name] += c.score
-                r1_comment_counts[c.subreddit.display_name] += 1
-            else:
-                r1_comment_breakdown[c.subreddit.display_name] = c.score
-                r1_comment_counts[c.subreddit.display_name] = 1
-                r1_comment_subs.append(c.subreddit.display_name)
-
-    def r2_submission_karma(self):
-        r2_submission_breakdown = {}
-        r2_post_counts = {}
-        r2_submission_subs = []
+                submission_breakdown[s.subreddit.display_name] = [0,0]
+                submission_breakdown[s.subreddit.display_name][0] = s.score
+                post_counts[s.subreddit.display_name] = [0, 0]
+                post_counts[s.subreddit.display_name][0] = 1
         for s in self.r2.submissions.new(limit=None):
-            if s.subreddit.display_name in r2_submission_breakdown.keys():
-                r2_submission_breakdown[s.subreddit.display_name] += s.score
-                r2_post_counts[s.subreddit.display_name] += 1
+            if s.subreddit.display_name in submission_breakdown.keys():
+                submission_breakdown[s.subreddit.display_name][1] += s.score
+                post_counts[s.subreddit.display_name][1] += 1
             else:
-                r2_submission_breakdown[s.subreddit.display_name] = s.score
-                r2_post_counts[s.subreddit.display_name] = 1
-                r2_submission_subs.append(s.subreddit.display_name)
-        return r2_submission_breakdown
+                submission_breakdown[s.subreddit.display_name] = [0,0]
+                submission_breakdown[s.subreddit.display_name][1] = s.score
+                post_counts[s.subreddit.display_name] = [0,0]
+                post_counts[s.subreddit.display_name][1] = 1
+        return [submission_breakdown, post_counts]
 
-    def r2_comment_karma(self):
-        r2_comment_counts = {}
-        r2_comment_subs = []
-        r2_comment_breakdown = {}
-        for c in self.r2.comments.new(limit=None):
-            if c.subreddit.display_name in r2_comment_breakdown.keys():
-                r2_comment_breakdown[c.subreddit.display_name] += c.score
-                r2_comment_counts[c.subreddit.display_name] += 1
+    def comment_karma(self):
+        comment_breakdown = {}
+        comment_counts = {}
+        for s in self.r1.comments.new(limit=None):
+            if s.subreddit.display_name in comment_breakdown.keys():
+                comment_breakdown[s.subreddit.display_name][0] += s.score
+                comment_counts[s.subreddit.display_name][0] += 1
             else:
-                r2_comment_breakdown[c.subreddit.display_name] = c.score
-                r2_comment_counts[c.subreddit.display_name] = 1
-                r2_comment_subs.append(c.subreddit.display_name)
+                comment_breakdown[s.subreddit.display_name] = [0, 0]
+                comment_breakdown[s.subreddit.display_name][0] = s.score
+                comment_counts[s.subreddit.display_name] = [0, 0]
+                comment_counts[s.subreddit.display_name][0] = 1
+        for s in self.r2.comments.new(limit=None):
+            if s.subreddit.display_name in comment_breakdown.keys():
+                comment_breakdown[s.subreddit.display_name][1] += s.score
+                comment_counts[s.subreddit.display_name][1] += 1
+            else:
+                comment_breakdown[s.subreddit.display_name] = [0, 0]
+                comment_breakdown[s.subreddit.display_name][1] = s.score
+                comment_counts[s.subreddit.display_name] = [0, 0]
+                comment_counts[s.subreddit.display_name][1] = 1
+        return [comment_breakdown, comment_counts]
+    def top_reddit(self):
+        r1_top_comment = [c for c in self.r1.comments.top(limit=1)][0]
+        r1_top_submission = [s for s in self.r1.submissions.top(limit=1)][0]
+        r2_top_comment = [c for c in self.r2.comments.top(limit=1)][0]
+        r2_top_submission = [s for s in self.r2.submissions.top(limit=1)][0]
+        return {"r1_comment": r1_top_comment, "r1_sub": r1_top_submission, "r2_comment": r2_top_comment, "r2_submission": r2_top_submission}
+    def time_stamps(self):
+        r1_cake = toEST(datetime.fromtimestamp(int(self.r1.created_utc)).strftime('%Y%m%d %H:%M:%S.%f'))
+        r2_cake = toEST(datetime.fromtimestamp(int(self.r2.created_utc)).strftime('%Y%m%d %H:%M:%S.%f'))
+        delta_1 = datetime.now() - datetime.fromtimestamp(int(self.r1.created_utc))
+        print(delta_1.days)
+        delta_2 = datetime.now() - datetime.fromtimestamp(int(self.r2.created_utc))
+        print(delta_2.days)
+        print(r1_cake)
+        print(r2_cake)
 
-'''
-r2_top_comment = [c for c in r2.comments.top(limit=1)][0]
-r2_top_submission = [c for c in r2.submissions.top(limit=1)][0]
-print(toEST(datetime.fromtimestamp(int(r1.created_utc)).strftime('%Y%m%d %H:%M:%S.%f')))
-print(toEST(datetime.fromtimestamp(int(r2.created_utc)).strftime('%Y%m%d %H:%M:%S.%f')))
-'''
+
 
 '''
 

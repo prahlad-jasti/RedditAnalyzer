@@ -2,8 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
 </head>
 <body>
-{{stats.karma_2()["total_karma"]}}
+    <script type="text/javascript">
+        var karma_1 = {{stats.karma_1()["total_karma"]}};
+        var karma_2 = {{stats.karma_2()["total_karma"]}};
+        document.body.innerHTML += "<p>" + karma_1 + "</p>";
+        document.body.innerHTML += "<p>" + karma_2 + "</p>";
+    </script>
 </body>
 </html>
