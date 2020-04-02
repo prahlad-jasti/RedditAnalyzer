@@ -9,10 +9,6 @@ from requests import Session
 import json
 import time
 
-def toEST(utc):
-    utc_dt = datetime.strptime(utc, '%Y%m%d %H:%M:%S.%f')
-    nyt_dt = utc_dt.replace(tzinfo=pytz.timezone('utc')).astimezone(tz = pytz.timezone('America/New_York'))
-    return datetime.strftime(nyt_dt, '%m/%d/%Y %H:%M:%S')
 
 handler = logging.StreamHandler()
 handler.setLevel(logging.DEBUG)
@@ -29,42 +25,41 @@ reddit = praw.Reddit(client_id='acrtj7jRqKQlSw',
 
 class RedditStatistics:
 
-    def __init__(self, r1, r2):
+    def __init__(self, r1, r2, tz):
+        self.tz = tz;
         self.r1 = reddit.redditor(r1)
         self.r2 = reddit.redditor(r2)
 
     def karma_1(self):
-        r1_karma = {"total_karma": self.r1.link_karma + self.r1.comment_karma, "r1_link": self.r1.link_karma,
+        return {"total_r1": self.r1.link_karma + self.r1.comment_karma, "r1_link": self.r1.link_karma,
                     "r1_comment": self.r1.comment_karma}
-        return r1_karma
 
     def karma_2(self):
-        r2_karma = {"total_karma": self.r2.link_karma + self.r2.comment_karma, "r2_link": self.r2.link_karma,
+        return {"total_r2": self.r2.link_karma + self.r2.comment_karma, "r2_link": self.r2.link_karma,
                     "r2_comment": self.r2.comment_karma}
-        return r2_karma
 
     def submission_karma(self):
         submission_breakdown = {}
-        post_counts = {}
+        submission_counts = {}
         for s in self.r1.submissions.new(limit=None):
             if s.subreddit.display_name in submission_breakdown.keys():
                 submission_breakdown[s.subreddit.display_name][0] += s.score
-                post_counts[s.subreddit.display_name][0] += 1
+                submission_counts[s.subreddit.display_name][0] += 1
             else:
                 submission_breakdown[s.subreddit.display_name] = [0,0]
                 submission_breakdown[s.subreddit.display_name][0] = s.score
-                post_counts[s.subreddit.display_name] = [0, 0]
-                post_counts[s.subreddit.display_name][0] = 1
+                submission_counts[s.subreddit.display_name] = [0, 0]
+                submission_counts[s.subreddit.display_name][0] = 1
         for s in self.r2.submissions.new(limit=None):
             if s.subreddit.display_name in submission_breakdown.keys():
                 submission_breakdown[s.subreddit.display_name][1] += s.score
-                post_counts[s.subreddit.display_name][1] += 1
+                submission_counts[s.subreddit.display_name][1] += 1
             else:
                 submission_breakdown[s.subreddit.display_name] = [0,0]
                 submission_breakdown[s.subreddit.display_name][1] = s.score
-                post_counts[s.subreddit.display_name] = [0,0]
-                post_counts[s.subreddit.display_name][1] = 1
-        return [submission_breakdown, post_counts]
+                submission_counts[s.subreddit.display_name] = [0,0]
+                submission_counts[s.subreddit.display_name][1] = 1
+        return {"submission_breakdown": submission_breakdown, "submission_counts": submission_counts}
 
     def comment_karma(self):
         comment_breakdown = {}
@@ -87,24 +82,29 @@ class RedditStatistics:
                 comment_breakdown[s.subreddit.display_name][1] = s.score
                 comment_counts[s.subreddit.display_name] = [0, 0]
                 comment_counts[s.subreddit.display_name][1] = 1
-        return [comment_breakdown, comment_counts]
+        return {"comment_breakdown": comment_breakdown, "comment_counts": comment_counts}
+
     def top_reddit(self):
-        r1_top_comment = [c for c in self.r1.comments.top(limit=1)][0]
-        r1_top_submission = [s for s in self.r1.submissions.top(limit=1)][0]
-        r2_top_comment = [c for c in self.r2.comments.top(limit=1)][0]
-        r2_top_submission = [s for s in self.r2.submissions.top(limit=1)][0]
-        return {"r1_comment": r1_top_comment, "r1_sub": r1_top_submission, "r2_comment": r2_top_comment, "r2_submission": r2_top_submission}
+        link_start = "www.reddit.com"
+        r1_top_comment = link_start + str([c for c in self.r1.comments.top(limit=1)][0].permalink)
+        r1_top_submission = link_start + str([s for s in self.r1.submissions.top(limit=1)][0].permalink)
+        r2_top_comment = link_start + str([c for c in self.r2.comments.top(limit=1)][0].permalink)
+        r2_top_submission = link_start + str([s for s in self.r2.submissions.top(limit=1)][0].permalink)
+        return {"r1_comment_top": r1_top_comment, "r1_sub_top": r1_top_submission, "r2_comment_top": r2_top_comment, "r2_submission_top": r2_top_submission}
+
+    def changeTZ(self, utc):
+        new_dt = utc.replace(tzinfo=pytz.timezone('utc')).astimezone(tz=pytz.timezone(self.tz))
+        return datetime.strftime(new_dt, '%m/%d/%Y %H:%M:%S')
+
     def time_stamps(self):
-        r1_cake = toEST(datetime.fromtimestamp(int(self.r1.created_utc)).strftime('%Y%m%d %H:%M:%S.%f'))
-        r2_cake = toEST(datetime.fromtimestamp(int(self.r2.created_utc)).strftime('%Y%m%d %H:%M:%S.%f'))
-        delta_1 = datetime.now() - datetime.fromtimestamp(int(self.r1.created_utc))
-        print(delta_1.days)
-        delta_2 = datetime.now() - datetime.fromtimestamp(int(self.r2.created_utc))
-        print(delta_2.days)
-        print(r1_cake)
-        print(r2_cake)
+        r1_cake = self.changeTZ(datetime.fromtimestamp(int(self.r1.created_utc)))
+        r2_cake = self.changeTZ(datetime.fromtimestamp(int(self.r2.created_utc)))
+        delta_1 = str((datetime.utcnow() - datetime.fromtimestamp(int(self.r1.created_utc))).days)
+        delta_2 = str((datetime.utcnow() - datetime.fromtimestamp(int(self.r2.created_utc))).days)
+        return {"r1_cake": r1_cake, "r2_cake": r2_cake, "delta_r1": delta_1, "delta_r2": delta_2}
 
-
+    def reddit_merge(self):
+        return {**self.karma_1(), **self.karma_2(), **self.submission_karma(), **self.comment_karma(), **self.top_reddit(), **self.time_stamps()}
 
 '''
 

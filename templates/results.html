@@ -6,10 +6,10 @@
 </head>
 <body>
     <script type="text/javascript">
-        var karma_1 = {{stats.karma_1()["total_karma"]}};
-        var karma_2 = {{stats.karma_2()["total_karma"]}};
-        document.body.innerHTML += "<p>" + karma_1 + "</p>";
-        document.body.innerHTML += "<p>" + karma_2 + "</p>";
+         var reddit_calc = JSON.parse('{{ stats | tojson | safe}}');
+         var para = document.createElement("P");
+         para.innerText = reddit_calc.total_r1;
+         document.body.appendChild(para);
     </script>
 </body>
 </html>

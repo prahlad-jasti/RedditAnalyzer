@@ -27,7 +27,7 @@ def hello():
 @app.route('/results')
 def results():
     users = posts.find().sort([('_id', -1)]).limit(1).next()
-    reddit_calc = redStat(users['user_1'], users['user_2'])
+    reddit_calc = redStat(users['user_1'], users['user_2'], users['time_zone']).reddit_merge()
     return render_template("results.html", stats=reddit_calc)
 
 
