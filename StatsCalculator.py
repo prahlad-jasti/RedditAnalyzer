@@ -30,13 +30,9 @@ class RedditStatistics:
         self.r1 = reddit.redditor(r1)
         self.r2 = reddit.redditor(r2)
 
-    def karma_1(self):
-        return {"total_r1": self.r1.link_karma + self.r1.comment_karma, "r1_link": self.r1.link_karma,
-                    "r1_comment": self.r1.comment_karma}
-
-    def karma_2(self):
-        return {"total_r2": self.r2.link_karma + self.r2.comment_karma, "r2_link": self.r2.link_karma,
-                    "r2_comment": self.r2.comment_karma}
+    def karma(self):
+        return {"total": {"total_r1": self.r1.link_karma + self.r1.comment_karma, "total_r2": self.r2.link_karma + self.r2.comment_karma}, "link": {"link_r1": self.r1.link_karma, "link_r2": self.r2.link_karma},
+                    "comment": {"comment_r1": self.r1.comment_karma, "comment_r2": self.r2.comment_karma}}
 
     def submission_karma(self):
         submission_breakdown = {}
@@ -90,7 +86,7 @@ class RedditStatistics:
         r1_top_submission = link_start + str([s for s in self.r1.submissions.top(limit=1)][0].permalink)
         r2_top_comment = link_start + str([c for c in self.r2.comments.top(limit=1)][0].permalink)
         r2_top_submission = link_start + str([s for s in self.r2.submissions.top(limit=1)][0].permalink)
-        return {"r1_comment_top": r1_top_comment, "r1_sub_top": r1_top_submission, "r2_comment_top": r2_top_comment, "r2_submission_top": r2_top_submission}
+        return {"comment_top": {"r1_top_comment": r1_top_comment, "r2_top_comment": r2_top_comment}, "sub_top": {"r1_top_submission": r1_top_submission, "r2_top_submission": r2_top_submission}}
 
     def changeTZ(self, utc):
         new_dt = utc.replace(tzinfo=pytz.timezone('utc')).astimezone(tz=pytz.timezone(self.tz))
@@ -99,12 +95,12 @@ class RedditStatistics:
     def time_stamps(self):
         r1_cake = self.changeTZ(datetime.fromtimestamp(int(self.r1.created_utc)))
         r2_cake = self.changeTZ(datetime.fromtimestamp(int(self.r2.created_utc)))
-        delta_1 = str((datetime.utcnow() - datetime.fromtimestamp(int(self.r1.created_utc))).days)
-        delta_2 = str((datetime.utcnow() - datetime.fromtimestamp(int(self.r2.created_utc))).days)
-        return {"r1_cake": r1_cake, "r2_cake": r2_cake, "delta_r1": delta_1, "delta_r2": delta_2}
+        delta_r1 = str((datetime.utcnow() - datetime.fromtimestamp(int(self.r1.created_utc))).days)
+        delta_r2 = str((datetime.utcnow() - datetime.fromtimestamp(int(self.r2.created_utc))).days)
+        return {"cake": {"r1_cake": r1_cake, "r2_cake": r2_cake}, "delta": {"delta_r1": delta_r1, "delta_r2": delta_r2}}
 
     def reddit_merge(self):
-        return {**self.karma_1(), **self.karma_2(), **self.submission_karma(), **self.comment_karma(), **self.top_reddit(), **self.time_stamps()}
+        return {**self.karma(), **self.submission_karma(), **self.comment_karma(), **self.top_reddit(), **self.time_stamps()}
 
 '''
 

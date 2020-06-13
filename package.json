@@ -1,0 +1,19 @@
+{
+  "name": "redditanalyzer",
+  "version": "1.0.0",
+  "description": "Web application designed to compare two reddit users based on their statistics within subreddits such as comment karma, post karma, time spent viewing, etc., along with general statistics such as post readability scores",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/str1kebeam/RedditAnalyzer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/str1kebeam/RedditAnalyzer/issues"
+  },
+  "homepage": "https://github.com/str1kebeam/RedditAnalyzer#readme"
+}

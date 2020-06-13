@@ -3,13 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 </head>
 <body>
-    <script type="text/javascript">
-         var reddit_calc = JSON.parse('{{ stats | tojson | safe}}');
-         var para = document.createElement("P");
-         para.innerText = reddit_calc.total_r1;
-         document.body.appendChild(para);
+    <div id ="root"></div>
+    <div id = "rot"></div>
+    <script type="text/babel">
+        var reddit_calc = JSON.parse('{{ stats | tojson | safe}}');
+        var comment_counts = reddit_calc.comment_counts;
+        var submission_counts = reddit_calc.submission_counts;
+        function CompColumn(props){
+            var stats = props.stats;
+            var column = [];
+            for (var stat in stats){
+                column.push(<tr>
+                    <th>{stat}</th>
+                    <th>{stats[stat][0]}</th>
+                    <th>{stats[stat][1]}</th>
+                    </tr>
+                );
+            }
+            return (<table><tbody>{column}</tbody></table>);
+        }
+        ReactDOM.render(
+               <CompColumn stats={comment_counts} />,
+               document.getElementById('root')
+            );
+        ReactDOM.render(
+               <CompColumn stats={submission_counts} />,
+               document.getElementById('rot')
+            );
     </script>
+
 </body>
 </html>
