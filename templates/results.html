@@ -2,6 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <style>
+        table {
+            width: 100;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        th, td {
+            textAlign: left;
+            padding: 8px;
+            border-bottom: 1px solid;
+        }
+        tr:hover {background-color: #f5f5f5;}
+    </style>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
     <link rel="icon" href="data:;base64,iVBORw0KGgo=">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -10,32 +23,43 @@
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 </head>
 <body>
+    <div id="total"></div>
+    <div id="link"></div>
+    <div id="comment"></div>
+    <div id="top_comment"></div>
+    <div id="top_submission"></div>
     <div id ="root"></div>
-    <div id = "rot"></div>
     <script type="text/babel">
         var reddit_calc = JSON.parse('{{ stats | tojson | safe}}');
+        var total_karma = reddit_calc.total;
         var comment_counts = reddit_calc.comment_counts;
-        var submission_counts = reddit_calc.submission_counts;
+        var comment_karma = reddit_calc.comment_breakdown;
         function CompColumn(props){
             var stats = props.stats;
+            var category = props.category;
             var column = [];
+            column.push(<tr key = {category}>
+                        <th>{category}</th>
+                        <th>{reddit_calc.user_1}</th>
+                        <th>{reddit_calc.user_2}</th>
+                        </tr>);
             for (var stat in stats){
-                column.push(<tr>
-                    <th>{stat}</th>
-                    <th>{stats[stat][0]}</th>
-                    <th>{stats[stat][1]}</th>
+                column.push(<tr key = {stat}>
+                    <td>{stat}</td>
+                    <td>{stats[stat][0]}</td>
+                    <td>{stats[stat][1]}</td>
                     </tr>
                 );
             }
             return (<table><tbody>{column}</tbody></table>);
         }
         ReactDOM.render(
-               <CompColumn stats={comment_counts} />,
-               document.getElementById('root')
+               <CompColumn stats={total_karma}/>,
+               document.getElementById('total')
             );
         ReactDOM.render(
-               <CompColumn stats={submission_counts} />,
-               document.getElementById('rot')
+               <CompColumn stats={comment_counts} category="Subreddit"/>,
+               document.getElementById('root')
             );
     </script>
 
