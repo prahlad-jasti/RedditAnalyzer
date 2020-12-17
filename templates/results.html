@@ -23,25 +23,29 @@
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 </head>
 <body>
-    <div id="total"></div>
-    <div id="link"></div>
-    <div id="comment"></div>
+    <div id ="root"></div>
+
+    <div id="uptime"></div>
+
+    <div id="karma"></div>
+    <div id="comment_stats"></div>
+    <div id="submission_stats"></div>
     <div id="top_comment"></div>
     <div id="top_submission"></div>
-    <div id ="root"></div>
     <script type="text/babel">
 
         var reddit_calc = JSON.parse('{{ stats | tojson | safe}}');
 
-        var total_karma = reddit_calc.total;
-        var link_karma = reddit_calc.link;
-        var comment_karma = reddit_calc.comment;
+        var karma = reddit_calc.karma;
+
         var comment_breakdown = reddit_calc.comment_breakdown
         var comment_counts = reddit_calc.comment_counts
         var submission_breakdown = reddit_calc.submission_breakdown
         var submission_counts = reddit_calc.submission_counts
+
         var top_comments = reddit_calc.top_comments
         var top_submissions = reddit_calc.top_submissions
+
         var cake_days = reddit_calc.cake
         var uptime = reddit_calc.delta
 
@@ -64,17 +68,14 @@
             }
             return (<table><tbody>{column}</tbody></table>);
         }
+
         ReactDOM.render(
-               <CompColumn stats={total_karma}/>,
-               document.getElementById('total')
+               <CompColumn stats={cake_days}/>,
+               document.getElementById('uptime')
             );
         ReactDOM.render(
-               <CompColumn stats={link_karma}/>,
-               document.getElementById('link')
-            );
-        ReactDOM.render(
-               <CompColumn stats={comment_karma}/>,
-               document.getElementById('comment')
+               <CompColumn stats={karma}/>,
+               document.getElementById('karma')
             );
     </script>
 

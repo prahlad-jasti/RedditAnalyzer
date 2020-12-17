@@ -31,9 +31,9 @@ class RedditStatistics:
         self.r2 = reddit.redditor(r2)
 
     def karma(self):
-        return {"total": {"total_karma": [self.r1.link_karma + self.r1.comment_karma, self.r2.link_karma + self.r2.comment_karma]},
-                "link": {"link_karma": [self.r1.link_karma, self.r2.link_karma]},
-                "comment": {"comment_karma": [self.r1.comment_karma, self.r2.comment_karma]}}
+        return {"karma": {"Link Karma": [self.r1.link_karma, self.r2.link_karma],
+                          "Comment Karma": [self.r1.comment_karma, self.r2.comment_karma],
+                          "Total Karma": [self.r1.link_karma + self.r1.comment_karma, self.r2.link_karma + self.r2.comment_karma]}}
 
     def submission_karma(self):
         submission_breakdown = {}
