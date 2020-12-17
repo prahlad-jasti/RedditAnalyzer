@@ -87,8 +87,8 @@ class RedditStatistics:
         r1_top_submission = link_start + str([s for s in self.r1.submissions.top(limit=1)][0].permalink)
         r2_top_comment = link_start + str([c for c in self.r2.comments.top(limit=1)][0].permalink)
         r2_top_submission = link_start + str([s for s in self.r2.submissions.top(limit=1)][0].permalink)
-        return {"comment": {"top_comment": [r1_top_comment, r2_top_comment]},
-                "submission": {"top_submission": [r1_top_submission, r2_top_submission]}}
+        return {"top_comments": {"top_comment": [r1_top_comment, r2_top_comment]},
+                "top_submissions": {"top_submission": [r1_top_submission, r2_top_submission]}}
 
     def changeTZ(self, utc):
         new_dt = utc.replace(tzinfo=pytz.timezone('utc')).astimezone(tz=pytz.timezone(self.tz))
