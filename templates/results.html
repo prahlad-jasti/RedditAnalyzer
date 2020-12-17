@@ -28,8 +28,10 @@
     <div id="uptime"></div>
 
     <div id="karma"></div>
+
     <div id="comment_stats"></div>
     <div id="submission_stats"></div>
+    
     <div id="top_comment"></div>
     <div id="top_submission"></div>
     <script type="text/babel">
@@ -46,8 +48,7 @@
         var top_comments = reddit_calc.top_comments
         var top_submissions = reddit_calc.top_submissions
 
-        var cake_days = reddit_calc.cake
-        var uptime = reddit_calc.delta
+        var uptime = reddit_calc.uptime
 
         function CompColumn(props){
             var stats = props.stats;
@@ -70,7 +71,7 @@
         }
 
         ReactDOM.render(
-               <CompColumn stats={cake_days}/>,
+               <CompColumn stats={uptime}/>,
                document.getElementById('uptime')
             );
         ReactDOM.render(

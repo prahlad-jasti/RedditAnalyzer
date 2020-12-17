@@ -92,17 +92,18 @@ class RedditStatistics:
 
     def changeTZ(self, utc):
         new_dt = utc.replace(tzinfo=pytz.timezone('utc')).astimezone(tz=pytz.timezone(self.tz))
-        return datetime.strftime(new_dt, '%m/%d/%Y %H:%M:%S')
+        return datetime.strftime(new_dt, '%m/%d/%Y')
 
     def time_stamps(self):
         r1_cake = self.changeTZ(datetime.fromtimestamp(int(self.r1.created_utc)))
         r2_cake = self.changeTZ(datetime.fromtimestamp(int(self.r2.created_utc)))
+
         delta_r1 = str((datetime.utcnow() - datetime.fromtimestamp(int(self.r1.created_utc))).days)
         delta_r2 = str((datetime.utcnow() - datetime.fromtimestamp(int(self.r2.created_utc))).days)
-        return {"cake": {"cake_day": [r1_cake, r2_cake]},
-                "delta": {"uptime": [delta_r1, delta_r2]}}
 
-    def reddit_merge(self):
+        return {"uptime": {"Cake Day (Account Uptime)": [r1_cake + " ("+ delta_r1 + " days)", r2_cake + " ("+ delta_r2 + " days)"]}}
+
+    def merge(self):
         return {**{"user_1": self.r1.name, "user_2": self.r2.name},**self.karma(), **self.submission_karma(), **self.comment_karma(), **self.top_reddit(), **self.time_stamps()}
 
 '''
