@@ -2,19 +2,17 @@ import dotenv
 import praw
 import logging
 from datetime import datetime
-from dotenv import load_dotenv
 import pytz
-import os
-load_dotenv()
+
 handler = logging.StreamHandler()
 handler.setLevel(logging.DEBUG)
 logger = logging.getLogger('prawcore')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
-REDDIT_PASSWORD = os.getenv('REDDIT_PASSWORD')
-CLIENT_ID = os.getenv('REDDIT_ID')
-CLIENT_SECRET = os.getenv('REDDIT_SECRET')
+REDDIT_PASSWORD = 'stg90shredder'
+CLIENT_ID = 'acrtj7jRqKQlSw'
+CLIENT_SECRET = '3dOyTX5ijxMYhgca02T32Ptt-y0'
 
 reddit = praw.Reddit(client_id=CLIENT_ID,
                      client_secret=CLIENT_SECRET,
@@ -29,6 +27,7 @@ class RedditStatistics:
         self.tz = tz;
         self.r1 = reddit.redditor(r1)
         self.r2 = reddit.redditor(r2)
+        self.common_subs = set()
 
     def karma(self):
         return {"karma": {"Link Karma": [self.r1.link_karma, self.r2.link_karma],
@@ -56,6 +55,9 @@ class RedditStatistics:
                 submission_breakdown[s.subreddit.display_name][1] = s.score
                 submission_counts[s.subreddit.display_name] = [0,0]
                 submission_counts[s.subreddit.display_name][1] = 1
+
+            if submission_counts[s.subreddit.display_name][0] > 0 and submission_counts[s.subreddit.display_name][1] > 0:
+                self.common_subs.add(s.subreddit.display_name)
         return {"submission_breakdown": submission_breakdown, "submission_counts": submission_counts}
 
     def comment_karma(self):
@@ -79,6 +81,9 @@ class RedditStatistics:
                 comment_breakdown[s.subreddit.display_name][1] = s.score
                 comment_counts[s.subreddit.display_name] = [0, 0]
                 comment_counts[s.subreddit.display_name][1] = 1
+
+            if comment_counts[s.subreddit.display_name][0] > 0 and comment_counts[s.subreddit.display_name][1] > 0:
+                self.common_subs.add(s.subreddit.display_name)
         return {"comment_breakdown": comment_breakdown, "comment_counts": comment_counts}
 
     def top_reddit(self):
@@ -104,4 +109,4 @@ class RedditStatistics:
         return {"uptime": {"Cake Day (Account Uptime)": [r1_cake + " ("+ delta_r1 + " days)", r2_cake + " ("+ delta_r2 + " days)"]}}
 
     def merge(self):
-        return {**{"user_1": self.r1.name, "user_2": self.r2.name},**self.karma(), **self.submission_karma(), **self.comment_karma(), **self.top_reddit(), **self.time_stamps()}
+        return {**{"user_1": self.r1.name, "user_2": self.r2.name}, **self.karma(), **self.submission_karma(), **self.comment_karma(),  **{"common": list(self.common_subs)}, **self.top_reddit(), **self.time_stamps()}

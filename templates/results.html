@@ -51,7 +51,9 @@
         var top_submissions = reddit_calc.top_submissions
 
         var uptime = reddit_calc.uptime
+        var common_subs = reddit_calc.common
 
+        console.log(common_subs)
         function CompColumn(props){
             var stats = props.stats;
             var category = props.category;
@@ -61,13 +63,13 @@
                         <th>{reddit_calc.user_1}</th>
                         <th>{reddit_calc.user_2}</th>
                         </tr>);
+
             for (var stat in stats){
                 column.push(<tr key = {stat}>
                     <td>{stat}</td>
                     <td>{stats[stat][0]}</td>
                     <td>{stats[stat][1]}</td>
-                    </tr>
-                );
+                    </tr>);
             }
             return (<table><tbody>{column}</tbody></table>);
         }
@@ -81,13 +83,42 @@
                         <th>{reddit_calc.user_1}</th>
                         <th>{reddit_calc.user_2}</th>
                         </tr>);
+
             for (var stat in stats){
                 column.push(<tr key = {stat}>
                     <td>{stat}</td>
                     <td><a href={stats[stat][0]}>Link</a></td>
                     <td><a href={stats[stat][1]}>Link</a></td>
-                    </tr>
-                );
+                    </tr>);
+            }
+            return (<table><tbody>{column}</tbody></table>);
+        }
+
+        function BreakdownColumn(props){
+            var stats = props.stats;
+            var category = props.category;
+            var column = [];
+            column.push(<tr key = {category}>
+                        <th>{category}</th>
+                        <th>{reddit_calc.user_1}</th>
+                        <th>{reddit_calc.user_2}</th>
+                        </tr>);
+
+            for (var stat in stats){
+                if (common_subs.includes(stat)){
+                    column.push(<tr key = {stat} className = "common">
+                        <td>{stat}</td>
+                        <td>{stats[stat][0]}</td>
+                        <td>{stats[stat][1]}</td>
+                        </tr>);
+                }
+                else{
+                    column.push(<tr key = {stat}>
+                        <td>{stat}</td>
+                        <td>{stats[stat][0]}</td>
+                        <td>{stats[stat][1]}</td>
+                        </tr>);
+                    }
             }
             return (<table><tbody>{column}</tbody></table>);
         }
@@ -101,6 +132,15 @@
                document.getElementById('karma')
             );
 
+        ReactDOM.render(
+               <BreakdownColumn stats={submission_counts}/>,
+               document.getElementById('submission_stats')
+            );
+
+        ReactDOM.render(
+               <BreakdownColumn stats={comment_counts}/>,
+               document.getElementById('comment_stats')
+            );
         ReactDOM.render(
                <LinkColumn stats={top_comments}/>,
                document.getElementById('top_comment')
