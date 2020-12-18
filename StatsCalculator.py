@@ -1,21 +1,26 @@
+import dotenv
 import praw
 import logging
 from datetime import datetime
-
+from dotenv import load_dotenv
 import pytz
-
-
+import os
+load_dotenv()
 handler = logging.StreamHandler()
 handler.setLevel(logging.DEBUG)
 logger = logging.getLogger('prawcore')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
-reddit = praw.Reddit(client_id='acrtj7jRqKQlSw',
-                     client_secret='3dOyTX5ijxMYhgca02T32Ptt-y0',
+REDDIT_PASSWORD = os.getenv('REDDIT_PASSWORD')
+CLIENT_ID = os.getenv('REDDIT_ID')
+CLIENT_SECRET = os.getenv('REDDIT_SECRET')
+
+reddit = praw.Reddit(client_id=CLIENT_ID,
+                     client_secret=CLIENT_SECRET,
                      user_agent='<console:new_bot:0.0.1 (by /u/str1kebeam)>',
                      username='str1kebeam',
-                     password='stg90shredder')
+                     password=REDDIT_PASSWORD)
 
 
 class RedditStatistics:
