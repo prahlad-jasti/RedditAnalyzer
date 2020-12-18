@@ -1,7 +1,5 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, request
 from pymongo import MongoClient
-import datetime
-import json
 from StatsCalculator import RedditStatistics as redStat
 
 app = Flask(__name__)

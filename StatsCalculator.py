@@ -1,13 +1,8 @@
-
 import praw
 import logging
 from datetime import datetime
 
 import pytz
-import math
-from requests import Session
-import json
-import time
 
 
 handler = logging.StreamHandler()
