@@ -41,11 +41,8 @@
 
         var karma = reddit_calc.karma;
 
-        var comment_breakdown = reddit_calc.comment_breakdown
-        var comment_counts = reddit_calc.comment_counts
-
-        var submission_breakdown = reddit_calc.submission_breakdown
-        var submission_counts = reddit_calc.submission_counts
+        var comment_breakdown = reddit_calc.comment_combo
+        var submission_breakdown = reddit_calc.submission_combo
 
         var top_comments = reddit_calc.top_comments
         var top_submissions = reddit_calc.top_submissions
@@ -133,14 +130,14 @@
             );
 
         ReactDOM.render(
-               <BreakdownColumn stats={submission_counts}/>,
+               <BreakdownColumn stats={submission_breakdown}/>,
                document.getElementById('submission_stats')
             );
-
         ReactDOM.render(
-               <BreakdownColumn stats={comment_counts}/>,
+               <BreakdownColumn stats={comment_breakdown}/>,
                document.getElementById('comment_stats')
             );
+
         ReactDOM.render(
                <LinkColumn stats={top_comments}/>,
                document.getElementById('top_comment')

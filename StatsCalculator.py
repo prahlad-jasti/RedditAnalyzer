@@ -3,6 +3,7 @@ import praw
 import logging
 from datetime import datetime
 import pytz
+import os
 
 handler = logging.StreamHandler()
 handler.setLevel(logging.DEBUG)
@@ -10,9 +11,9 @@ logger = logging.getLogger('prawcore')
 logger.setLevel(logging.DEBUG)
 logger.addHandler(handler)
 
-REDDIT_PASSWORD = 'stg90shredder'
-CLIENT_ID = 'acrtj7jRqKQlSw'
-CLIENT_SECRET = '3dOyTX5ijxMYhgca02T32Ptt-y0'
+REDDIT_PASSWORD = os.environ['REDDIT_PASSWORD']
+CLIENT_ID = os.environ['CLIENT_ID']
+CLIENT_SECRET = os.environ['CLIENT_SECRET']
 
 reddit = praw.Reddit(client_id=CLIENT_ID,
                      client_secret=CLIENT_SECRET,
@@ -55,10 +56,15 @@ class RedditStatistics:
                 submission_breakdown[s.subreddit.display_name][1] = s.score
                 submission_counts[s.subreddit.display_name] = [0,0]
                 submission_counts[s.subreddit.display_name][1] = 1
-
             if submission_counts[s.subreddit.display_name][0] > 0 and submission_counts[s.subreddit.display_name][1] > 0:
                 self.common_subs.add(s.subreddit.display_name)
-        return {"submission_breakdown": submission_breakdown, "submission_counts": submission_counts}
+
+        submission_combo = {}
+        for sub in submission_counts.keys():
+            submission_combo[sub] = [str(submission_counts[sub][0]) + " posts (" + str(submission_breakdown[sub][0]) + " karma)",
+                                     str(submission_counts[sub][1]) + " posts (" + str(submission_breakdown[sub][1]) + " karma)"]
+
+        return {"submission_combo": submission_combo}
 
     def comment_karma(self):
         comment_breakdown = {}
@@ -81,10 +87,16 @@ class RedditStatistics:
                 comment_breakdown[s.subreddit.display_name][1] = s.score
                 comment_counts[s.subreddit.display_name] = [0, 0]
                 comment_counts[s.subreddit.display_name][1] = 1
-
             if comment_counts[s.subreddit.display_name][0] > 0 and comment_counts[s.subreddit.display_name][1] > 0:
                 self.common_subs.add(s.subreddit.display_name)
-        return {"comment_breakdown": comment_breakdown, "comment_counts": comment_counts}
+
+        comment_combo = {}
+        for sub in comment_counts.keys():
+            comment_combo[sub] = [
+                str(comment_counts[sub][0]) + " comments (" + str(comment_breakdown[sub][0]) + " karma)",
+                str(comment_counts[sub][1]) + " comments (" + str(comment_breakdown[sub][1]) + " karma)"]
+
+        return {"comment_combo": comment_combo}
 
     def top_reddit(self):
         link_start = "www.reddit.com"
