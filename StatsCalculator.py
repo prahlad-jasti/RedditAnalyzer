@@ -87,7 +87,7 @@ class RedditStatistics:
         r1_top_submission = link_start + str([s for s in self.r1.submissions.top(limit=1)][0].permalink)
         r2_top_comment = link_start + str([c for c in self.r2.comments.top(limit=1)][0].permalink)
         r2_top_submission = link_start + str([s for s in self.r2.submissions.top(limit=1)][0].permalink)
-        return {"top_comments": {"top_comment": [r1_top_comment, r2_top_comment]},
+        return {"top_comments": {"top_comment": [r1_top_comment ,r2_top_comment]},
                 "top_submissions": {"top_submission": [r1_top_submission, r2_top_submission]}}
 
     def changeTZ(self, utc):
@@ -105,21 +105,3 @@ class RedditStatistics:
 
     def merge(self):
         return {**{"user_1": self.r1.name, "user_2": self.r2.name},**self.karma(), **self.submission_karma(), **self.comment_karma(), **self.top_reddit(), **self.time_stamps()}
-
-'''
-
-# Originally supposed show a histogram of comment karma for user, but
-# I didn't realize that most redditors have an inconsistent comment
-# history with most comments under 20 karma, along with outliers
-# giving a heavily skewed histogram. Oh well.
-
-'''
-'''
-data = np.array(karma_values)
-bins = np.linspace(math.ceil(min(data)),
-                   math.floor(max(data)),
-                   30)
-plt.xlim([min(data)-5, max(data)+5])
-plt.hist(data, bins=bins, alpha=0.5)
-plt.show()
-'''

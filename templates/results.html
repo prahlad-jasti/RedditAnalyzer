@@ -31,9 +31,10 @@
 
     <div id="comment_stats"></div>
     <div id="submission_stats"></div>
-    
+
     <div id="top_comment"></div>
     <div id="top_submission"></div>
+
     <script type="text/babel">
 
         var reddit_calc = JSON.parse('{{ stats | tojson | safe}}');
@@ -42,6 +43,7 @@
 
         var comment_breakdown = reddit_calc.comment_breakdown
         var comment_counts = reddit_calc.comment_counts
+
         var submission_breakdown = reddit_calc.submission_breakdown
         var submission_counts = reddit_calc.submission_counts
 
@@ -70,6 +72,26 @@
             return (<table><tbody>{column}</tbody></table>);
         }
 
+        function LinkColumn(props){
+            var stats = props.stats;
+            var category = props.category;
+            var column = [];
+            column.push(<tr key = {category}>
+                        <th>{category}</th>
+                        <th>{reddit_calc.user_1}</th>
+                        <th>{reddit_calc.user_2}</th>
+                        </tr>);
+            for (var stat in stats){
+                column.push(<tr key = {stat}>
+                    <td>{stat}</td>
+                    <td><a href={stats[stat][0]}>Link</a></td>
+                    <td><a href={stats[stat][1]}>Link</a></td>
+                    </tr>
+                );
+            }
+            return (<table><tbody>{column}</tbody></table>);
+        }
+
         ReactDOM.render(
                <CompColumn stats={uptime}/>,
                document.getElementById('uptime')
@@ -77,6 +99,15 @@
         ReactDOM.render(
                <CompColumn stats={karma}/>,
                document.getElementById('karma')
+            );
+            
+        ReactDOM.render(
+               <LinkColumn stats={top_comments}/>,
+               document.getElementById('top_comment')
+            );
+        ReactDOM.render(
+               <LinkColumn stats={top_submissions}/>,
+               document.getElementById('top_submission')
             );
     </script>
 
