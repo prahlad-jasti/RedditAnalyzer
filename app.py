@@ -19,14 +19,14 @@ def hello():
     if request.method == 'POST':
         users = request.json
         posts.insert_one(users)
-    return render_template("hello.html")
+    return render_template("results.html")
 
 
-@app.route('/results')
+@app.route('/statistics')
 def results():
     users = posts.find().sort([('_id', -1)]).limit(1).next()
     reddit_calc = redStat(users['user_1'], users['user_2'], users['time_zone']).merge()
-    return render_template("results.html", stats=reddit_calc)
+    return render_template("statistics.html", stats=reddit_calc)
 
 
 if __name__ == "__main__":

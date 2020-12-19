@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        table {
+            width: 100;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        th, td {
+            textAlign: left;
+            padding: 8px;
+            border-bottom: 1px solid;
+        }
+        tr:hover {background-color: #f5f5f5;}
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+</head>
+<body>
+    <div id ="root"></div>
+
+    <div id="uptime"></div>
+
+    <div id="karma"></div>
+
+    <div id="comment_stats"></div>
+    <div id="submission_stats"></div>
+
+    <div id="top_comment"></div>
+    <div id="top_submission"></div>
+
+    <script type="text/babel">
+
+        var reddit_calc = JSON.parse('{{ stats | tojson | safe}}');
+
+        var karma = reddit_calc.karma;
+
+        var comment_breakdown = reddit_calc.comment_combo
+        var submission_breakdown = reddit_calc.submission_combo
+
+        var top_comments = reddit_calc.top_comments
+        var top_submissions = reddit_calc.top_submissions
+
+        var uptime = reddit_calc.uptime
+        var common_subs = reddit_calc.common
+
+        console.log(common_subs)
+        function CompColumn(props){
+            var stats = props.stats;
+            var category = props.category;
+            var column = [];
+            column.push(<tr key = {category}>
+                        <th>{category}</th>
+                        <th>{reddit_calc.user_1}</th>
+                        <th>{reddit_calc.user_2}</th>
+                        </tr>);
+
+            for (var stat in stats){
+                column.push(<tr key = {stat}>
+                    <td>{stat}</td>
+                    <td>{stats[stat][0]}</td>
+                    <td>{stats[stat][1]}</td>
+                    </tr>);
+            }
+            return (<table><tbody>{column}</tbody></table>);
+        }
+
+        function LinkColumn(props){
+            var stats = props.stats;
+            var category = props.category;
+            var column = [];
+            column.push(<tr key = {category}>
+                        <th>{category}</th>
+                        <th>{reddit_calc.user_1}</th>
+                        <th>{reddit_calc.user_2}</th>
+                        </tr>);
+
+            for (var stat in stats){
+                column.push(<tr key = {stat}>
+                    <td>{stat}</td>
+                    <td><a href={stats[stat][0]}>Link</a></td>
+                    <td><a href={stats[stat][1]}>Link</a></td>
+                    </tr>);
+            }
+            return (<table><tbody>{column}</tbody></table>);
+        }
+
+        function BreakdownColumn(props){
+            var stats = props.stats;
+            var category = props.category;
+            var column = [];
+            column.push(<tr key = {category}>
+                        <th>{category}</th>
+                        <th>{reddit_calc.user_1}</th>
+                        <th>{reddit_calc.user_2}</th>
+                        </tr>);
+
+            for (var stat in stats){
+                if (common_subs.includes(stat)){
+                    column.push(<tr key = {stat} className = "common">
+                        <td>{stat}</td>
+                        <td>{stats[stat][0]}</td>
+                        <td>{stats[stat][1]}</td>
+                        </tr>);
+                }
+                else{
+                    column.push(<tr key = {stat}>
+                        <td>{stat}</td>
+                        <td>{stats[stat][0]}</td>
+                        <td>{stats[stat][1]}</td>
+                        </tr>);
+                    }
+            }
+            return (<table><tbody>{column}</tbody></table>);
+        }
+
+        ReactDOM.render(
+               <CompColumn stats={uptime}/>,
+               document.getElementById('uptime')
+            );
+        ReactDOM.render(
+               <CompColumn stats={karma}/>,
+               document.getElementById('karma')
+            );
+
+        ReactDOM.render(
+               <BreakdownColumn stats={submission_breakdown}/>,
+               document.getElementById('submission_stats')
+            );
+        ReactDOM.render(
+               <BreakdownColumn stats={comment_breakdown}/>,
+               document.getElementById('comment_stats')
+            );
+
+        ReactDOM.render(
+               <LinkColumn stats={top_comments}/>,
+               document.getElementById('top_comment')
+            );
+        ReactDOM.render(
+               <LinkColumn stats={top_submissions}/>,
+               document.getElementById('top_submission')
+            );
+    </script>
+
+</body>
+</html>
